@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "FitMxo",
+    "slug": "fitmxo",
+    "scheme": "fitmxo",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0B0F14",
+    "newArchEnabled": true,
+    "android": {
+      "package": "com.fitmxo.fitlifeai",
+      "versionCode": 1,
+      "edgeToEdgeEnabled": true,
+      "permissions": [],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
