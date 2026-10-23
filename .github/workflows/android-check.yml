@@ -39,43 +39,16 @@ jobs:
       - name: Install dependencies (like EAS)
         run: npm ci --include=dev --no-audit --no-fund || npm install --no-audit --no-fund
 
-      - name: Report Expo modules and suspicious publications
-        # Lists every expo-module.config.json with an android.publication block
-        # that lacks "version" (breaks SDK 54 autolinking), plus who depends on it.
+      - name: Check Expo module versions
         run: |
-          node -e '
-            const fs = require("fs"), path = require("path");
-            const found = [], mods = [], badNames = [];
-            function walk(dir, depth) {
-              if (depth > 4) return;
-              let entries; try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
-              for (const e of entries) {
-                if (!e.isDirectory()) continue;
-                const p = path.join(dir, e.name);
-                if (e.name.startsWith("@")) { walk(p, depth); continue; }
-                const cfg = path.join(p, "expo-module.config.json");
-                if (fs.existsSync(cfg)) {
-                  const pkg = JSON.parse(fs.readFileSync(path.join(p, "package.json"), "utf8"));
-                  const c = JSON.parse(fs.readFileSync(cfg, "utf8"));
-                  const id = pkg.name + "@" + pkg.version + " (" + path.relative(process.cwd(), p) + ")";
-                  mods.push(id);
-                  const pub = c.android && c.android.publication;
-                  if (pub && !pub.version) { found.push(id); badNames.push(pkg.name); }
-                }
-                const nested = path.join(p, "node_modules");
-                if (fs.existsSync(nested)) walk(nested, depth + 1);
-              }
-            }
-            walk("node_modules", 0);
-            console.log("Expo modules:\n" + mods.join("\n"));
-            if (found.length) console.log("::error title=Versionless android.publication::" + found.join(" | "));
-            else console.log("::notice title=Publications OK::No versionless android.publication found");
-            fs.writeFileSync("bad-modules.txt", [...new Set(badNames)].join("\n"));
-          '
+          set +e
+          node scripts/check-expo-modules.js
+          CODE=$?
+          set -e
           for m in $(cat bad-modules.txt); do
-            WHY=$(npm ls "$m" --all 2>/dev/null | tr '\n' ' ' | head -c 1500)
-            echo "::warning title=Who depends on $m::$WHY"
+            echo "::warning title=Who depends on $m::$(npm ls "$m" --all 2>/dev/null | tr '\n' ' ' | head -c 1500)"
           done
+          exit $CODE
 
       - name: Generate native Android project
         run: npx expo prebuild --platform android --no-install --clean

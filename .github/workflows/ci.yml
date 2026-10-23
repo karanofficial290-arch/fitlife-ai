@@ -36,6 +36,9 @@ jobs:
           rm -rf node_modules
           npm ci --include=dev --no-audit --no-fund
 
+      - name: Check Expo native module versions
+        run: node scripts/check-expo-modules.js
+
       - name: Check Expo SDK package versions
         # Reports mismatches as a warning annotation instead of failing,
         # so the remaining checks still run.

@@ -26,6 +26,8 @@ Unit tests cover pure logic: input validation, Supabase error mapping, password-
 | 2026-10-23 | Parser over 72 `.ts`/`.tsx` files; local import/export resolution script | 0 syntax errors; all imports resolve |
 | 2026-10-23 | **GitHub Actions CI** on commit `5168eaa` (run 39939400846): npm install, `tsc`, ESLint, Jest | **All passed.** Warnings: `react-native` should be 0.81.5 (fixed next commit); actions on deprecated Node 20 (bumped to v5 / Node 22) |
 | 2026-10-23 | First EAS preview build (c64a2c15) | **Failed** at `npm ci`: unpinned `react-dom` resolved to 19.3.1, conflicting with `react` 19.1.0. Fix: pin `react-dom` 19.1.0; CI now runs `npm ci --include=dev` like EAS |
+| 2026-10-23 | EAS preview build 1d8d56c4 | **Failed** at Gradle: `EAS_BUILD_UNKNOWN_GRADLE_ERROR` |
+| 2026-10-23 | Android compile check on GitHub (prebuild + `gradlew assembleRelease`) | Found cause: `@expo/vector-icons` pulled `expo-font@58.0.9` (newer SDK; versionless `android.publication`). Fix: pin `expo-font ~14.0.12` + npm override; `scripts/check-expo-modules.js` now runs in CI |
 | — | App launch on an Android device | **Not run yet** |
 
 ## Manual test script (Android, Expo Go)
