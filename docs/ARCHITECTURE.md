@@ -68,7 +68,7 @@ Screens refresh their data on focus via `hooks/useFocusLoader`; long lists page 
 
 ## Builds without a computer
 
-- `.github/workflows/eas-build.yml` runs `eas build` on GitHub Actions when started by hand (Actions tab → "Android build (EAS)" → Run workflow). It needs the `EXPO_TOKEN` repository secret.
+- `.github/workflows/eas-build.yml` runs `eas build` on GitHub Actions. It starts automatically for any push to `main` whose commit message contains `[eas-build]` (preview profile), or by hand via Actions → "Android build (EAS)" → Run workflow. It needs the `EXPO_TOKEN` repository secret.
 - `preview` → installable APK; `production` → Android App Bundle for Play.
 - First non-interactive Android build: EAS CLI ≥ 18.2.0 creates and stores the Android signing keystore on Expo's servers automatically.
 - Expo project: owner `fitmxos-team`, slug `fitmxo`, id in `app.json` → `extra.eas.projectId`.
