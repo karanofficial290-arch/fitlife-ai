@@ -1,0 +1,61 @@
+name: Android build (EAS)
+
+# Started by hand from the GitHub Actions tab ("Run workflow").
+# Needs a repository secret named EXPO_TOKEN (an expo.dev access token).
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'preview = installable APK, production = Play Store bundle'
+        type: choice
+        options: [preview, production]
+        default: preview
+
+permissions:
+  contents: read
+
+concurrency:
+  group: eas-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Check EXPO_TOKEN secret
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::error title=EXPO_TOKEN missing::Add a repository secret named EXPO_TOKEN (Settings > Secrets and variables > Actions)."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build on EAS and wait for the result
+        run: |
+          set -o pipefail
+          eas build --platform android --profile "${{ inputs.profile }}" --non-interactive --wait --json > build.json
+          cat build.json
+          URL=$(jq -r '.[0].artifacts.buildUrl // empty' build.json)
+          STATUS=$(jq -r '.[0].status // "unknown"' build.json)
+          PAGE="https://expo.dev/accounts/$(jq -r '.[0].project.ownerAccount.name // "fitmxos-team"' build.json)/projects/fitmxo/builds/$(jq -r '.[0].id' build.json)"
+          echo "::notice title=EAS build ${STATUS}::Build page: ${PAGE}"
+          if [ -n "$URL" ]; then
+            echo "::notice title=Download (${{ inputs.profile }})::${URL}"
+          fi

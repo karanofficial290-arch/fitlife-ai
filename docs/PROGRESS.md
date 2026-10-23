@@ -31,6 +31,14 @@ Statuses: Not started · In progress · Implemented · Tested · Blocked
 | Pure logic (dates, plan picking, weekly minutes, weight/water parsing) | **Tested** | 38 unit tests in total |
 | GitHub Actions CI (install, Expo version check, typecheck, lint, Jest) | **Tested** | First run green on `5168eaa` |
 
+## Device builds
+
+| Item | Status | Notes |
+| --- | --- | --- |
+| Expo account, org `fitmxos-team`, project `fitmxo` | Implemented | Created by owner on expo.dev |
+| `app.json` owner + projectId, `eas.json` profiles | Implemented | |
+| GitHub Actions "Android build (EAS)" workflow | Implemented | Needs `EXPO_TOKEN` secret; not run yet |
+
 ## Not yet verified
 
 - No run on an Android device yet (owner has no computer — plan: EAS cloud build → APK).
@@ -49,4 +57,4 @@ M1 Onboarding · M3 Diet (calories, nutrition, meals) · M4 Progress tab · M5 P
 
 ## Next task
 
-Push the CI warning fixes, then EAS cloud build for an installable APK (owner creates a free expo.dev account).
+Owner adds `EXPO_TOKEN` secret → run "Android build (EAS)" with `preview` → install APK and walk through the manual test script in TESTING.md.

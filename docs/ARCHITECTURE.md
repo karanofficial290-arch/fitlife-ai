@@ -64,7 +64,14 @@ Screens refresh their data on focus via `hooks/useFocusLoader`; long lists page 
 ## Secrets
 
 - `.env` is git-ignored; `.env.example` holds placeholders only.
-- EAS cloud builds do **not** read the local `.env`. Set the same two `EXPO_PUBLIC_*` variables in EAS environment variables (expo.dev → project → Environment variables) before building.
+- EAS cloud builds do not read the local `.env`, so the two `EXPO_PUBLIC_*` values are set in `eas.json` (`base` profile). Both are client-side values that ship inside every app build anyway; the Supabase publishable key is designed to be public and all private data is protected by RLS. Never add a secret/service-role key there.
+
+## Builds without a computer
+
+- `.github/workflows/eas-build.yml` runs `eas build` on GitHub Actions when started by hand (Actions tab → "Android build (EAS)" → Run workflow). It needs the `EXPO_TOKEN` repository secret.
+- `preview` → installable APK; `production` → Android App Bundle for Play.
+- First non-interactive Android build: EAS CLI ≥ 18.2.0 creates and stores the Android signing keystore on Expo's servers automatically.
+- Expo project: owner `fitmxos-team`, slug `fitmxo`, id in `app.json` → `extra.eas.projectId`.
 - AI provider keys (M6) will live only in Supabase Edge Function secrets, never in the app.
 
 ## Decisions

@@ -1,22 +1,23 @@
 {
   "cli": {
+    "version": ">= 18.2.0",
     "appVersionSource": "local"
   },
   "build": {
-    "development": {
-      "developmentClient": false,
-      "distribution": "internal",
-      "android": { "buildType": "apk" },
-      "environment": "development"
+    "base": {
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://ptlnycbxuajdqmcqzgxz.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_yaIB4biu0rIqXDLBHWDQvQ_G8duxz3R"
+      }
     },
     "preview": {
+      "extends": "base",
       "distribution": "internal",
-      "android": { "buildType": "apk" },
-      "environment": "preview"
+      "android": { "buildType": "apk" }
     },
     "production": {
-      "android": { "buildType": "app-bundle" },
-      "environment": "production"
+      "extends": "base",
+      "android": { "buildType": "app-bundle" }
     }
   },
   "submit": {

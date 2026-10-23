@@ -2,6 +2,7 @@
   "expo": {
     "name": "FitMxo",
     "slug": "fitmxo",
+    "owner": "fitmxos-team",
     "scheme": "fitmxo",
     "version": "0.1.0",
     "orientation": "portrait",
@@ -21,6 +22,11 @@
     "plugins": ["expo-router"],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c28676ee-9c3d-400a-b412-6ed82630aae9"
+      }
     }
   }
 }
