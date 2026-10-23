@@ -24,7 +24,8 @@ Unit tests cover pure logic: input validation, Supabase error mapping, password-
 | 2026-10-23 | Seed validation script | 41 exercises, 16 plans, 68 plan rows; no broken slugs; home plans use no gym-only exercises |
 | 2026-10-23 | Supabase advisors | Security: 0. Performance: only "unused index" (INFO) on a brand-new database |
 | 2026-10-23 | Parser over 72 `.ts`/`.tsx` files; local import/export resolution script | 0 syntax errors; all imports resolve |
-| — | Full `tsc` with dependencies, ESLint, Jest, app launch | **Not run yet** — CI (`.github/workflows/ci.yml`) runs them on push |
+| 2026-10-23 | **GitHub Actions CI** on commit `5168eaa` (run 39939400846): npm install, `tsc`, ESLint, Jest | **All passed.** Warnings: `react-native` should be 0.81.5 (fixed next commit); actions on deprecated Node 20 (bumped to v5 / Node 22) |
+| — | App launch on an Android device | **Not run yet** |
 
 ## Manual test script (Android, Expo Go)
 

@@ -29,13 +29,12 @@ Statuses: Not started · In progress · Implemented · Tested · Blocked
 | Home: greeting, daily goal bar, today's workout, water ring, weekly minutes chart, current/goal weight, quick actions | Implemented | Real data only |
 | Home: calories, steps, nutrition, AI assistant | Not started | Shown as "Jald aa raha hai" — no fake numbers |
 | Pure logic (dates, plan picking, weekly minutes, weight/water parsing) | **Tested** | 38 unit tests in total |
-| GitHub Actions CI (install, Expo version check, typecheck, lint, Jest) | Implemented | First run happens after the next push |
+| GitHub Actions CI (install, Expo version check, typecheck, lint, Jest) | **Tested** | First run green on `5168eaa` |
 
 ## Not yet verified
 
-- `npm install`, full TypeScript check against real library types, ESLint, Jest itself — npm is unreachable from the build session; CI will run these.
-- Package versions (incl. `react-native-svg`) were written without registry access; CI's `expo install --check` reports mismatches.
 - No run on an Android device yet (owner has no computer — plan: EAS cloud build → APK).
+- Supabase auth flows end to end (needs the app running).
 
 ## Later milestones
 
@@ -50,4 +49,4 @@ M1 Onboarding · M3 Diet (calories, nutrition, meals) · M4 Progress tab · M5 P
 
 ## Next task
 
-Owner approves push → CI runs → fix anything it reports → EAS cloud build for an installable APK.
+Push the CI warning fixes, then EAS cloud build for an installable APK (owner creates a free expo.dev account).
