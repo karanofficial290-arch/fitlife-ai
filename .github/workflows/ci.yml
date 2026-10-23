@@ -29,6 +29,13 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
+      - name: Clean install like EAS does
+        # EAS Build runs `npm ci --include=dev`; peer-dependency conflicts
+        # only show up there, so reproduce it before any cloud build.
+        run: |
+          rm -rf node_modules
+          npm ci --include=dev --no-audit --no-fund
+
       - name: Check Expo SDK package versions
         # Reports mismatches as a warning annotation instead of failing,
         # so the remaining checks still run.

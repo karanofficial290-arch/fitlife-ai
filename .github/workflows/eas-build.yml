@@ -49,13 +49,26 @@ jobs:
 
       - name: Build on EAS and wait for the result
         run: |
-          set -o pipefail
-          eas build --platform android --profile "${{ inputs.profile }}" --non-interactive --wait --json > build.json
-          cat build.json
-          URL=$(jq -r '.[0].artifacts.buildUrl // empty' build.json)
-          STATUS=$(jq -r '.[0].status // "unknown"' build.json)
-          PAGE="https://expo.dev/accounts/$(jq -r '.[0].project.ownerAccount.name // "fitmxos-team"' build.json)/projects/fitmxo/builds/$(jq -r '.[0].id' build.json)"
-          echo "::notice title=EAS build ${STATUS}::Build page: ${PAGE}"
+          set +e
+          eas build --platform android --profile "${{ inputs.profile }}" --non-interactive --wait --json > build.json 2> build.err
+          CODE=$?
+          set -e
+          cat build.json; cat build.err >&2
+
+          # Annotations are readable without logging in, so surface the outcome there.
+          ID=$(jq -r '.[0].id // empty' build.json 2>/dev/null || true)
+          STATUS=$(jq -r '.[0].status // "unknown"' build.json 2>/dev/null || echo unknown)
+          URL=$(jq -r '.[0].artifacts.buildUrl // empty' build.json 2>/dev/null || true)
+          if [ -n "$ID" ]; then
+            echo "::notice title=EAS build ${STATUS}::https://expo.dev/accounts/fitmxos-team/projects/fitmxo/builds/${ID}"
+            ERR=$(jq -r '.[0].error | if . then "\(.errorCode): \(.message)" else empty end' build.json 2>/dev/null || true)
+            [ -n "$ERR" ] && echo "::error title=EAS build error::$(echo "$ERR" | head -c 900 | tr '\n' ' ')"
+          fi
           if [ -n "$URL" ]; then
             echo "::notice title=Download (${{ inputs.profile }})::${URL}"
+          fi
+          if [ "$CODE" -ne 0 ]; then
+            # Last lines of the CLI output usually name the failing phase.
+            echo "::error title=eas build exited ${CODE}::$(grep -v '^\s*$' build.err | tail -n 25 | sed 's/\x1b\[[0-9;]*m//g' | tr '\n' ' ' | head -c 1500)"
+            exit "$CODE"
           fi
