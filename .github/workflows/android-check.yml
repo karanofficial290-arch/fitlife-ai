@@ -1,0 +1,60 @@
+name: Android compile check
+
+# Compiles the native Android app on a GitHub runner (same Gradle step that
+# EAS runs) and reports Gradle errors as annotations. Free, no EAS quota.
+# Runs on pushes whose commit message contains [android-check], or by hand.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-check
+  cancel-in-progress: true
+
+jobs:
+  gradle:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[android-check]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      EXPO_PUBLIC_SUPABASE_URL: https://ptlnycbxuajdqmcqzgxz.supabase.co
+      EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_yaIB4biu0rIqXDLBHWDQvQ_G8duxz3R
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install dependencies (like EAS)
+        run: npm ci --include=dev --no-audit --no-fund || npm install --no-audit --no-fund
+
+      - name: Generate native Android project
+        run: npx expo prebuild --platform android --no-install --clean
+
+      - name: Gradle assembleRelease
+        working-directory: android
+        run: |
+          set +e
+          ./gradlew :app:assembleRelease --no-daemon --stacktrace > ../gradle.log 2>&1
+          CODE=$?
+          set -e
+          tail -n 200 ../gradle.log
+          if [ "$CODE" -ne 0 ]; then
+            WHAT=$(awk '/What went wrong:/{f=1} f{print} /^\* Try:/{if(f) exit}' ../gradle.log | head -n 60 | sed 's/\x1b\[[0-9;]*m//g')
+            ERRS=$(grep -nE '^e: |error:|ERROR:|FAILED|Could not resolve|Unresolved reference|Execution failed' ../gradle.log | head -n 40 | sed 's/\x1b\[[0-9;]*m//g')
+            echo "::error title=Gradle: what went wrong::$(printf '%s' "$WHAT" | tr '\n' ' ' | head -c 4000)"
+            echo "::error title=Gradle: error lines::$(printf '%s' "$ERRS" | tr '\n' ' ' | head -c 4000)"
+            exit "$CODE"
+          fi
+          echo "::notice title=Android compile OK::assembleRelease succeeded"
