@@ -23,6 +23,10 @@ function RootNavigator() {
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
       <Stack.Protected guard={signedIn}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="workouts/plan/[id]" />
+        <Stack.Screen name="workouts/session/[id]" options={{ gestureEnabled: false }} />
+        <Stack.Screen name="workouts/exercises" />
+        <Stack.Screen name="workouts/history" />
       </Stack.Protected>
       <Stack.Protected guard={!signedIn}>
         <Stack.Screen name="(auth)" />
@@ -38,7 +42,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <StatusBar style="light" />
+        <StatusBar style="dark" />
         <RootNavigator />
       </AuthProvider>
     </SafeAreaProvider>

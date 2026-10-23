@@ -1,55 +1,183 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import { useCallback, useMemo, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
+import { AppHeader } from '@/components/ui/AppHeader';
+import { Avatar } from '@/components/ui/Avatar';
+import { ErrorRetry } from '@/components/ui/ErrorRetry';
 import { FormMessage } from '@/components/ui/FormMessage';
 import { Screen } from '@/components/ui/Screen';
-import { colors, spacing, typography } from '@/constants/theme';
-import { useMyProfile } from '@/features/profile/useMyProfile';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { colors, spacing } from '@/constants/theme';
+import { useAuth } from '@/features/auth/AuthProvider';
+import {
+  CardRow,
+  FeatureTile,
+  HeroCard,
+  QuickAction,
+  SoonBanner,
+  StatCard,
+  TodayWorkoutCard,
+  WeeklyProgressCard,
+} from '@/features/home/HomeCards';
+import { loadHomeData } from '@/features/home/homeData';
+import { WaterSheet } from '@/features/tracking/components/WaterSheet';
+import { WeightSheet, type WeightSheetMode } from '@/features/tracking/components/WeightSheet';
+import { formatWater } from '@/features/tracking/trackingValidation';
+import { useStartWorkout } from '@/features/workouts/useStartWorkout';
+import { useWorkoutLocation } from '@/features/workouts/useWorkoutLocation';
+import { completedToday, pickTodaysPlan, weeklyWorkoutMinutes } from '@/features/workouts/workoutLogic';
+import { useFocusLoader } from '@/hooks/useFocusLoader';
+import { weekdayIndexMonday } from '@/utils/dates';
 import { getGreeting } from '@/utils/greeting';
+import { ratio } from '@/utils/progress';
+import { firstName } from '@/utils/text';
 
 export default function HomeScreen() {
-  const { profile, loading, error, reload } = useMyProfile();
-  const name = profile?.display_name?.trim();
+  const { user } = useAuth();
+  const userId = user?.id ?? '';
+  const load = useCallback(() => loadHomeData(userId, new Date()), [userId]);
+  const { data, loading, error, reload } = useFocusLoader(load);
+  const location = useWorkoutLocation();
+  const { start, startingPlanId, error: startError } = useStartWorkout();
+  const [waterOpen, setWaterOpen] = useState(false);
+  const [weightMode, setWeightMode] = useState<WeightSheetMode | null>(null);
+
+  const now = new Date();
+  const todays = useMemo(() => (data ? pickTodaysPlan(data.plans, new Date(), location) : null), [data, location]);
+  const weekMinutes = useMemo(() => weeklyWorkoutMinutes(data?.weekSessions ?? [], new Date()), [data]);
+
+  const waterGoal = data?.profile?.water_goal_ml ?? 3000;
+  const waterMl = data?.waterTodayMl ?? 0;
+  const workoutDone = data ? completedToday(data.weekSessions, now) : false;
+  // Goals tracked today: water and one workout. Diet/steps join when built.
+  const goalProgress = (ratio(waterMl, waterGoal) + (workoutDone ? 1 : 0)) / 2;
+
+  const active = data?.active ?? null;
+  const activeDone = active ? active.exercises.filter((e) => e.completed_at).length : 0;
+
+  function onTodayWorkout() {
+    if (active) {
+      router.push({ pathname: '/workouts/session/[id]', params: { id: active.id } });
+    } else if (todays) {
+      void start(todays.id);
+    } else {
+      router.push('/workout');
+    }
+  }
 
   return (
     <Screen edges={['top', 'left', 'right']}>
-      <View style={styles.header}>
-        <Text style={styles.greeting}>{getGreeting(new Date())}</Text>
-        {loading ? (
-          <View style={styles.nameSkeleton} accessibilityLabel="Naam load ho raha hai" />
-        ) : (
-          <Text style={styles.name} accessibilityRole="header">
-            {name ? name : 'FitMxo mein swagat'}
-          </Text>
-        )}
-      </View>
+      <AppHeader right={<Avatar name={data?.profile?.display_name} onPress={() => router.push('/profile')} />} />
 
-      {error ? (
-        <View style={styles.errorBlock}>
-          <FormMessage tone="error" message={error} />
-          <Button title="Dobara try karein" variant="secondary" onPress={reload} />
+      <ErrorRetry message={data ? null : error} onRetry={reload} />
+      {data && error ? <FormMessage tone="error" message={`Refresh nahi hua: ${error}`} /> : null}
+      <FormMessage tone="error" message={startError} />
+
+      {loading && !data ? (
+        <View style={styles.gap}>
+          <Skeleton height={180} />
+          <Skeleton height={150} />
+          <Skeleton height={150} />
         </View>
+      ) : data ? (
+        <>
+          <HeroCard
+            greeting={getGreeting(now)}
+            name={firstName(data.profile?.display_name)}
+            goalProgress={goalProgress}
+          />
+
+          <TodayWorkoutCard
+            title={active ? 'Current Workout' : workoutDone ? "Today's workout ✓ ho gaya" : "Today's Workout"}
+            name={active ? active.plan_name : todays?.name ?? 'Workout chunein'}
+            minutes={active ? null : todays?.estimated_minutes ?? null}
+            buttonLabel={active ? `Continue (${activeDone}/${active.exercises.length})` : todays ? 'Start Workout' : 'Workouts dekhein'}
+            loading={!!todays && startingPlanId === todays.id}
+            onStart={onTodayWorkout}
+          />
+
+          <CardRow>
+            <StatCard
+              icon="water"
+              title="Water"
+              color={colors.water}
+              soft={colors.waterSoft}
+              value={formatWater(waterMl)}
+              goal={formatWater(waterGoal)}
+              progress={ratio(waterMl, waterGoal)}
+              onPress={() => setWaterOpen(true)}
+              accessibilityHint="Paani add karne ke liye tap karein"
+            />
+            <StatCard icon="fire" title="Calories" color={colors.calories} soft={colors.caloriesSoft} comingSoon />
+            <StatCard icon="shoe-print" title="Steps" color={colors.steps} soft={colors.accentSoft} comingSoon />
+          </CardRow>
+
+          <WeeklyProgressCard
+            minutesByDay={weekMinutes}
+            todayIndex={weekdayIndexMonday(now)}
+            currentWeight={data.latestWeight ? `${data.latestWeight.weight_kg} kg` : null}
+            goalWeight={data.profile?.goal_weight_kg != null ? `${data.profile.goal_weight_kg} kg` : null}
+            onLogWeight={() => setWeightMode('log')}
+            onSetGoal={() => setWeightMode('goal')}
+          />
+
+          <SoonBanner
+            icon="food-apple"
+            title="Nutrition Today"
+            body="Meals, calories aur protein/carbs/fat tracking agle update mein aa rahi hai."
+          />
+
+          <CardRow>
+            <FeatureTile
+              icon="dumbbell"
+              title="Workouts"
+              subtitle="Explore & train"
+              color={colors.accent}
+              soft={colors.accentSoft}
+              onPress={() => router.push('/workout')}
+            />
+            <FeatureTile
+              icon="history"
+              title="History"
+              subtitle="Past workouts"
+              color={colors.purple}
+              soft={colors.purpleSoft}
+              onPress={() => router.push('/workouts/history')}
+            />
+            <FeatureTile icon="silverware-fork-knife" title="Nutrition" subtitle="Track your meals" color={colors.calories} soft={colors.caloriesSoft} />
+            <FeatureTile icon="robot-happy-outline" title="AI Assistant" subtitle="Ask anything" color={colors.water} soft={colors.waterSoft} />
+          </CardRow>
+
+          <SectionHeader title="Quick Actions" />
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickRow}>
+            <QuickAction icon="dumbbell" label="Log Workout" color={colors.accent} soft={colors.accentSoft} onPress={() => router.push('/workout')} />
+            <QuickAction icon="water" label="Log Water" color={colors.water} soft={colors.waterSoft} onPress={() => setWaterOpen(true)} />
+            <QuickAction icon="scale-bathroom" label="Add Weight" color={colors.purple} soft={colors.purpleSoft} onPress={() => setWeightMode('log')} />
+            <QuickAction icon="book-open-variant" label="Exercises" color={colors.calories} soft={colors.caloriesSoft} onPress={() => router.push('/workouts/exercises')} />
+            <QuickAction icon="cog-outline" label="Settings" color={colors.textMuted} soft={colors.surfaceRaised} onPress={() => router.push('/profile')} />
+          </ScrollView>
+        </>
       ) : null}
 
-      <Card title="Aaj ka workout">
-        <Text style={styles.body}>Workout plans agle milestones mein aayenge.</Text>
-      </Card>
-      <Card title="Nutrition aur paani">
-        <Text style={styles.body}>Meal aur water tracking jald hi yahan dikhegi.</Text>
-      </Card>
-      <Card title="Weekly progress">
-        <Text style={styles.body}>Workout log karna shuru karte hi aapki progress yahan dikhegi.</Text>
-      </Card>
+      {userId ? (
+        <>
+          <WaterSheet visible={waterOpen} userId={userId} onClose={() => setWaterOpen(false)} onSaved={reload} />
+          <WeightSheet
+            mode={weightMode}
+            userId={userId}
+            initialValue={weightMode === 'goal' ? data?.profile?.goal_weight_kg : data?.latestWeight?.weight_kg}
+            onClose={() => setWeightMode(null)}
+            onSaved={reload}
+          />
+        </>
+      ) : null}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: { gap: spacing.xs, marginTop: spacing.md, marginBottom: spacing.sm },
-  greeting: { ...typography.body, color: colors.textMuted },
-  name: { ...typography.title, color: colors.text },
-  nameSkeleton: { height: 34, width: 180, borderRadius: 8, backgroundColor: colors.surfaceRaised },
-  errorBlock: { gap: spacing.sm },
-  body: { ...typography.body, color: colors.text },
+  gap: { gap: spacing.md },
+  quickRow: { gap: spacing.sm, paddingBottom: spacing.lg },
 });

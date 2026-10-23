@@ -4,32 +4,50 @@ Last updated: 2026-10-23
 
 Statuses: Not started · In progress · Implemented · Tested · Blocked
 
+"Tested" here means automated checks passed. Nothing has run on a phone yet — see "Not yet verified".
+
 ## M0 Foundation
 
 | Item | Status | Notes |
 | --- | --- | --- |
 | Supabase project `fitmxo` (ap-south-1, free plan) | Implemented | Created 2026-10-23 |
 | `profiles` / `user_preferences` + trigger + RLS | **Tested** | Rolled-back SQL test + security advisor (0 findings) |
-| Generated DB types | Implemented | `types/database.ts` |
-| Validation, error mapping, reset-link parsing, greeting | **Tested** | 17 unit tests passed (run via Node's built-in TS, not Jest — see TESTING.md) |
-| Expo config, tsconfig, ESLint, Jest, EAS profiles | Implemented | Not yet installed/run — npm unreachable from the build session |
-| Theme + UI components | Implemented | Not yet run on a device |
-| Sign up / login / logout / forgot + reset password | Implemented | Not yet run end to end |
-| Persistent session + route guards | Implemented | Not yet run on a device |
-| 5-tab navigation with honest "coming soon" states | Implemented | Not yet run on a device |
-| Supabase redirect URLs (`fitmxo://**`, `exp://**`) | Implemented | Added by owner in dashboard on 2026-10-23 (not independently verified) |
-| `npm install`, typecheck, lint, Jest, app launch | **Blocked** | Needs a machine with npm access |
+| Validation, error mapping, reset-link parsing | **Tested** | Unit tests |
+| Auth screens, session persistence, route guards | Implemented | Not yet run on a device |
+| Supabase redirect URLs | Implemented | Added by owner (not independently verified) |
+
+## Design pass 1 (owner screens: Home + Workout)
+
+| Item | Status | Notes |
+| --- | --- | --- |
+| Light green theme from owner designs | Implemented | Replaced dark theme; all text pairs ≥ 4.5:1 contrast |
+| Exercise catalog (41) + 16 workout plans, gym and home | **Tested** | Seeded; slug references validated; RLS read-only |
+| `workout_sessions`, session exercises, `start_workout_session` RPC | **Tested** | SQL test: start, resume, switch, cross-user isolation, anon blocked |
+| `water_logs`, `weight_logs`, profile water/weight goals | **Tested** | SQL test: own rows only |
+| Workout tab: today's workout, muscle/level/location filters, recommended, current workout, quick access | Implemented | |
+| Plan detail, workout session (sets, rest timer, duration timer, finish/stop), exercise library (search + paging), history (paging) | Implemented | |
+| Home: greeting, daily goal bar, today's workout, water ring, weekly minutes chart, current/goal weight, quick actions | Implemented | Real data only |
+| Home: calories, steps, nutrition, AI assistant | Not started | Shown as "Jald aa raha hai" — no fake numbers |
+| Pure logic (dates, plan picking, weekly minutes, weight/water parsing) | **Tested** | 38 unit tests in total |
+| GitHub Actions CI (install, Expo version check, typecheck, lint, Jest) | Implemented | First run happens after the next push |
+
+## Not yet verified
+
+- `npm install`, full TypeScript check against real library types, ESLint, Jest itself — npm is unreachable from the build session; CI will run these.
+- Package versions (incl. `react-native-svg`) were written without registry access; CI's `expo install --check` reports mismatches.
+- No run on an Android device yet (owner has no computer — plan: EAS cloud build → APK).
 
 ## Later milestones
 
-M1 Onboarding · M2 Workouts · M3 Diet · M4 Progress · M5 Profile & privacy · M6 AI · M7 Release — all **Not started**.
+M1 Onboarding · M3 Diet (calories, nutrition, meals) · M4 Progress tab · M5 Profile & privacy · M6 AI assistant · M7 Release — **Not started**. Steps tracking needs a pedometer permission decision.
 
 ## Known limitations
 
-- Package versions in `package.json` were written without registry access; run `npx expo install --fix` after the first install.
-- Home and Profile each fetch the profile separately (fine for now; share via a cache in M4).
-- Sign-up consent text is a placeholder until a real privacy policy exists (M7).
+- Photos from the designs are replaced by icons until the owner supplies licensed images.
+- Gym/Home choice is stored on the device only (moves to `user_preferences` in M1).
+- Weight is kg-only; imperial units come with M5 settings.
+- Exercise library search filters only pages already loaded (catalog is small today).
 
 ## Next task
 
-Owner runs the first install on a computer (see TESTING.md), then M1 Onboarding.
+Owner approves push → CI runs → fix anything it reports → EAS cloud build for an installable APK.

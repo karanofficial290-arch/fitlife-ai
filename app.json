@@ -5,8 +5,8 @@
     "scheme": "fitmxo",
     "version": "0.1.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "dark",
-    "backgroundColor": "#0B0F14",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F3F7F5",
     "newArchEnabled": true,
     "android": {
       "package": "com.fitmxo.fitlifeai",

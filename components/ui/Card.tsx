@@ -1,11 +1,13 @@
 import type { ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
-import { colors, radius, spacing, typography } from '@/constants/theme';
+import { cardShadow, colors, radius, spacing, typography } from '@/constants/theme';
 
-export function Card({ title, children }: { title?: string; children: ReactNode }) {
+type Props = { title?: string; children: ReactNode; style?: StyleProp<ViewStyle> };
+
+export function Card({ title, children, style }: Props) {
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, style]}>
       {title ? (
         <Text style={styles.title} accessibilityRole="header">
           {title}
@@ -24,6 +26,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     padding: spacing.lg,
     gap: spacing.sm,
+    ...cardShadow,
   },
-  title: { ...typography.label, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.6 },
+  title: { ...typography.subheading, color: colors.text },
 });

@@ -41,3 +41,6 @@ export function mapAuthError(error: unknown): string {
 
   return GENERIC_ERROR;
 }
+
+/** Same mapping for database / RPC errors: network detection + safe generic fallback. */
+export const mapError = mapAuthError;

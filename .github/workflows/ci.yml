@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      # setup-node also registers problem matchers, so tsc/eslint errors
+      # show up as annotations on the commit.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Check Expo SDK package versions
+        # Reports mismatches as a warning annotation instead of failing,
+        # so the remaining checks still run.
+        run: |
+          if ! npx expo install --check > expo-check.log 2>&1; then
+            cat expo-check.log
+            echo "::warning title=Expo dependency versions::$(tr '\n' ' ' < expo-check.log | cut -c1-900)"
+          else
+            cat expo-check.log
+          fi
+
+      - name: Generate Expo type references
+        # expo-env.d.ts is git-ignored; Expo normally creates it on `expo start`.
+        run: echo '/// <reference types="expo/types" />' > expo-env.d.ts
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npx jest --ci --reporters=default --reporters=github-actions

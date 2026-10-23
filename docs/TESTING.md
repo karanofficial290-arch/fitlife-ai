@@ -19,7 +19,12 @@ Unit tests cover pure logic: input validation, Supabase error mapping, password-
 | 2026-10-23 | Supabase security advisor | 0 findings |
 | 2026-10-23 | TypeScript 6.0 strict check of the 4 pure-logic files | 0 errors |
 | 2026-10-23 | TypeScript parser over all 34 `.ts`/`.tsx` files (syntax only — React Native/Expo types not installed) | 0 syntax errors |
-| — | Full `tsc` with dependencies, ESLint, Jest, app launch | **Not run yet** |
+| 2026-10-23 | 7 test files (38 tests) via the same Node shim | 38 passed, 0 failed |
+| 2026-10-23 | RLS + RPC test for workouts, water, weight (rolled back) | Start/resume/switch correct; user B saw 0 of A's rows and could not update or insert into A's session; anon blocked from catalog and RPC |
+| 2026-10-23 | Seed validation script | 41 exercises, 16 plans, 68 plan rows; no broken slugs; home plans use no gym-only exercises |
+| 2026-10-23 | Supabase advisors | Security: 0. Performance: only "unused index" (INFO) on a brand-new database |
+| 2026-10-23 | Parser over 72 `.ts`/`.tsx` files; local import/export resolution script | 0 syntax errors; all imports resolve |
+| — | Full `tsc` with dependencies, ESLint, Jest, app launch | **Not run yet** — CI (`.github/workflows/ci.yml`) runs them on push |
 
 ## Manual test script (Android, Expo Go)
 
@@ -32,3 +37,11 @@ Unit tests cover pure logic: input validation, Supabase error mapping, password-
 7. **Forgot password** → email arrives → link opens the app → set new password → sign in with it.
 8. Open an **old reset link** → "Link kaam nahi kar raha" with a button to request a new one.
 9. Tap through all **5 tabs**; check keyboard does not cover inputs on the auth screens.
+10. **Workout tab:** change muscle group, level, Gym/Home → list updates; Home tab's "Today's Workout" follows the Gym/Home choice.
+11. **Start Workout** → session opens; tap set buttons → rest timer appears and can be skipped; plank shows a seconds timer.
+12. Leave the session, come back → **Current Workout** card shows progress; Continue resumes it.
+13. Finish all exercises → trophy summary; it appears in **Workout History** and in Home's weekly chart.
+14. Stop a workout with 0 exercises done → shows as "Stopped", not counted in the weekly chart.
+15. **Home water:** tap +250 → ring updates; custom 0 or 6000 ml → validation error.
+16. **Weight:** add 72.5 → shown on Home; add again same day → value replaced, not duplicated; set goal weight.
+17. Airplane mode on Home → error with retry; turn back on → retry works.
