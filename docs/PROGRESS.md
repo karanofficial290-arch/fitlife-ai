@@ -37,6 +37,11 @@ Statuses: Not started · In progress · Implemented · Tested · Blocked
 | --- | --- | --- |
 | FITMXO branding: name, tagline, logo mark, colors #079669 / #10233F / #F5F8FA | Implemented | Buttons use 19px bold labels so white-on-green meets AA large-text |
 | Welcome splash from owner artwork (animated lime loading bar, min 1.5 s, fades into app) | Implemented | `assets/splash/welcome.jpg` cropped from owner's design |
+| X logo (vector, from owner design) in header, auth screens | Implemented | |
+| Login screen per owner design: email, password show/hide, Remember me, Forgot password, Sign Up link | Implemented | Remember me off → session cleared on next app launch |
+| Sign Up per owner design: name, email, mobile (optional), password, DOB (13+), gender, Terms checkbox | Implemented | Profile fields saved by DB trigger; malformed values stored as NULL (SQL-tested) |
+| Login with mobile number; Google / Apple / Facebook buttons | Not started | Need SMS provider / OAuth apps set up by owner — not shown until they work |
+| Terms & Privacy Policy screens | Implemented (DRAFT) | Owner must review; support email placeholder |
 | Photo slots + `constants/photos.ts` registry | Implemented | Owner will send photos; branded gradient placeholder until then |
 | `meal_logs` table + `calorie_goal` / `step_goal` on profile | **Tested** | RLS SQL test: own rows only, anon 0 |
 | Home: hero, today's workout, calories/water/steps rings, nutrition donut, weekly chart, weight tiles, 4 shortcuts, 4 quick actions | Implemented | Log Meal sheet saves real meals |

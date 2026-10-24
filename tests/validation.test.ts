@@ -1,5 +1,8 @@
 import {
+  formatDobInput,
   normalizeEmail,
+  parseDob,
+  parsePhone,
   validateDisplayName,
   validateEmail,
   validatePassword,
@@ -50,5 +53,40 @@ describe('validateDisplayName', () => {
 describe('normalizeEmail', () => {
   it('trims and lowercases', () => {
     expect(normalizeEmail('  Karan@Gmail.COM ')).toBe('karan@gmail.com');
+  });
+});
+
+
+describe('parsePhone', () => {
+  it('is optional and normalizes Indian numbers', () => {
+    expect(parsePhone('')).toEqual({ value: null, error: null });
+    expect(parsePhone('98765 43210')).toEqual({ value: '+919876543210', error: null });
+    expect(parsePhone('+447911123456').value).toBe('+447911123456');
+  });
+  it('rejects malformed numbers', () => {
+    expect(parsePhone('12345').error).not.toBeNull();
+    expect(parsePhone('5876543210').error).not.toBeNull();
+  });
+});
+
+describe('formatDobInput', () => {
+  it('inserts slashes while typing', () => {
+    expect(formatDobInput('1')).toBe('1');
+    expect(formatDobInput('1405')).toBe('14/05');
+    expect(formatDobInput('14051998')).toBe('14/05/1998');
+    expect(formatDobInput('14/05/19985')).toBe('14/05/1998');
+  });
+});
+
+describe('parseDob', () => {
+  const today = new Date(2026, 9, 24);
+  it('accepts a real date for someone 13 or older', () => {
+    expect(parseDob('14/05/1998', today)).toEqual({ value: '1998-05-14', error: null });
+    expect(parseDob('24/10/2013', today).value).toBe('2013-10-24');
+  });
+  it('rejects impossible dates, wrong format and under-13s', () => {
+    expect(parseDob('31/02/2000', today).error).not.toBeNull();
+    expect(parseDob('1998-05-14', today).error).not.toBeNull();
+    expect(parseDob('25/10/2013', today).error).not.toBeNull();
   });
 });

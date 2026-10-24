@@ -30,6 +30,9 @@ function AppStack() {
       </Stack.Protected>
       {/* Reachable from the reset email whether or not a session exists yet. */}
       <Stack.Screen name="reset-password" />
+      {/* Legal pages open from sign-up and settings, signed in or not. */}
+      <Stack.Screen name="legal/terms" />
+      <Stack.Screen name="legal/privacy" />
       <Stack.Screen name="+not-found" />
     </Stack>
   );

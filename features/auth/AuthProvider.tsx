@@ -3,6 +3,8 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 
 import { supabase } from '@/services/supabase';
 
+import { shouldForgetSessionOnLaunch } from './rememberMe';
+
 type AuthContextValue = {
   session: Session | null;
   user: User | null;
@@ -19,10 +21,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true;
 
-    supabase.auth
-      .getSession()
-      .then(({ data }) => {
-        if (active) setSession(data.session);
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      // "Remember me" was off last time: end that session on this cold start.
+      if (data.session && (await shouldForgetSessionOnLaunch())) {
+        await supabase.auth.signOut({ scope: 'local' });
+        return null;
+      }
+      return data.session;
+    })()
+      .then((restored) => {
+        if (active) setSession(restored);
       })
       .catch(() => {
         // Corrupt or unreadable stored session: treat as signed out.

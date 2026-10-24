@@ -1,19 +1,24 @@
-import { Link } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { useRef, useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { LogoMark } from '@/components/brand/LogoMark';
 import { Button } from '@/components/ui/Button';
+import { Checkbox } from '@/components/ui/Checkbox';
 import { FormMessage } from '@/components/ui/FormMessage';
-import { Screen } from '@/components/ui/Screen';
-import { TextField } from '@/components/ui/TextField';
-import { colors, spacing, typography } from '@/constants/theme';
+import { IconField } from '@/components/ui/IconField';
+import { colors, MIN_TOUCH_TARGET, spacing, typography } from '@/constants/theme';
 import { signIn } from '@/features/auth/authService';
+import { AuthLayout } from '@/features/auth/components/AuthLayout';
+import { setRememberMe } from '@/features/auth/rememberMe';
 import { validateEmail } from '@/features/auth/validation';
+
+const HERO = require('../../assets/photos/login-hero.png');
 
 export default function SignInScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(true);
   const [errors, setErrors] = useState<{ email?: string | null; password?: string | null }>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -29,30 +34,27 @@ export default function SignInScreen() {
     if (next.email || next.password) return;
 
     setSubmitting(true);
+    await setRememberMe(remember);
     const { error } = await signIn(email, password);
     setSubmitting(false);
-    // On success, AuthProvider receives the session and the router guard
-    // moves the user to the tabs automatically.
+    // On success AuthProvider gets the session and the route guard opens the app.
     if (error) setFormError(error);
   }
 
   return (
-    <Screen>
-      <View style={styles.header}>
-        <View style={styles.brandRow}>
-          <LogoMark size={44} />
-          <Text style={styles.brand}>FITMXO</Text>
-        </View>
-        <Text style={styles.title} accessibilityRole="header">
-          Wapas swagat hai
-        </Text>
-        <Text style={styles.subtitle}>Apne account mein login karein.</Text>
-      </View>
-
+    <AuthLayout
+      titleLine1="Welcome Back,"
+      titleLine2="Athlete!"
+      subtitle="Your fitness journey continues here."
+      photo={HERO}
+      photoAspect={542 / 482}
+    >
       <FormMessage tone="error" message={formError} />
 
-      <TextField
-        label="Email"
+      <IconField
+        icon="email-outline"
+        accessibleName="Email address"
+        placeholder="Email address"
         value={email}
         onChangeText={setEmail}
         error={errors.email}
@@ -63,43 +65,49 @@ export default function SignInScreen() {
         returnKeyType="next"
         onSubmitEditing={() => passwordRef.current?.focus()}
       />
-      <TextField
+      <IconField
         ref={passwordRef}
-        label="Password"
+        icon="lock-outline"
+        accessibleName="Password"
+        placeholder="Password"
+        password
         value={password}
         onChangeText={setPassword}
         error={errors.password}
-        secureTextEntry
         autoComplete="current-password"
         textContentType="password"
         returnKeyType="done"
         onSubmitEditing={handleSubmit}
       />
 
-      <Link href="/forgot-password" style={styles.link}>
-        Password bhool gaye?
-      </Link>
-
-      <Button title="Login" onPress={handleSubmit} loading={submitting} />
-
-      <View style={styles.footer}>
-        <Text style={styles.muted}>Account nahi hai? </Text>
-        <Link href="/sign-up" style={styles.linkInline}>
-          Sign up karein
-        </Link>
+      <View style={styles.optionsRow}>
+        <Checkbox checked={remember} onChange={setRemember} accessibilityLabel="Remember me">
+          <Text style={styles.muted}>Remember me</Text>
+        </Checkbox>
+        <Pressable onPress={() => router.push('/forgot-password')} accessibilityRole="link" style={styles.linkHit}>
+          <Text style={styles.link}>Forgot Password?</Text>
+        </Pressable>
       </View>
-    </Screen>
+
+      <Button title="Login" trailingIcon="arrow-right" onPress={handleSubmit} loading={submitting} />
+
+      <View style={styles.switchRow}>
+        <Text style={styles.muted}>Don&apos;t have an account?</Text>
+        <Pressable onPress={() => router.push('/sign-up')} accessibilityRole="link" accessibilityLabel="Sign Up" style={styles.switchLink}>
+          <Text style={styles.linkStrong}>Sign Up</Text>
+          <MaterialCommunityIcons name="arrow-right" size={20} color={colors.accentText} />
+        </Pressable>
+      </View>
+    </AuthLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  header: { gap: spacing.sm, marginTop: spacing.xxl, marginBottom: spacing.md },
-  brandRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  brand: { fontSize: 26, fontWeight: '900', color: colors.text, letterSpacing: 0.5 },
-  title: { ...typography.title, color: colors.text },
-  subtitle: { ...typography.body, color: colors.textMuted },
-  link: { ...typography.label, color: colors.accentText, alignSelf: 'flex-end', paddingVertical: spacing.sm },
-  footer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' },
+  optionsRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm },
   muted: { ...typography.body, color: colors.textMuted },
-  linkInline: { ...typography.label, color: colors.accentText, paddingVertical: spacing.sm },
+  linkHit: { minHeight: MIN_TOUCH_TARGET, justifyContent: 'center' },
+  link: { ...typography.label, fontSize: 15, color: colors.accentText },
+  switchRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: spacing.sm },
+  switchLink: { flexDirection: 'row', alignItems: 'center', gap: 4, minHeight: MIN_TOUCH_TARGET },
+  linkStrong: { fontSize: 17, fontWeight: '800', color: colors.accentText },
 });

@@ -106,6 +106,9 @@ export type Database = {
           water_goal_ml: number
           calorie_goal: number
           step_goal: number
+          date_of_birth: string | null
+          gender: string | null
+          phone: string | null
         }
         Insert: {
           created_at?: string
@@ -117,6 +120,9 @@ export type Database = {
           water_goal_ml?: number
           calorie_goal?: number
           step_goal?: number
+          date_of_birth?: string | null
+          gender?: string | null
+          phone?: string | null
         }
         Update: {
           created_at?: string
@@ -128,6 +134,9 @@ export type Database = {
           water_goal_ml?: number
           calorie_goal?: number
           step_goal?: number
+          date_of_birth?: string | null
+          gender?: string | null
+          phone?: string | null
         }
         Relationships: []
       }

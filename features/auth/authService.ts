@@ -23,17 +23,30 @@ export function signIn(email: string, password: string): Promise<AuthResult> {
   );
 }
 
-export async function signUp(
-  email: string,
-  password: string,
-  displayName: string,
-): Promise<SignUpResult> {
+export type SignUpInput = {
+  email: string;
+  password: string;
+  displayName: string;
+  /** Normalized, e.g. +919876543210, or null. */
+  phone: string | null;
+  /** YYYY-MM-DD */
+  dateOfBirth: string;
+  gender: string;
+};
+
+export async function signUp(input: SignUpInput): Promise<SignUpResult> {
   try {
     const { data, error } = await supabase.auth.signUp({
-      email: normalizeEmail(email),
-      password,
+      email: normalizeEmail(input.email),
+      password: input.password,
       options: {
-        data: { display_name: displayName.trim() },
+        // Copied into public.profiles by the handle_new_user() trigger.
+        data: {
+          display_name: input.displayName.trim(),
+          phone: input.phone,
+          date_of_birth: input.dateOfBirth,
+          gender: input.gender,
+        },
         emailRedirectTo: Linking.createURL('/sign-in'),
       },
     });

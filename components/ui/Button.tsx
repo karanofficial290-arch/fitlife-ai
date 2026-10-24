@@ -18,6 +18,8 @@ type Props = {
   icon?: IconName;
   /** Show a trailing chevron like the reference designs. */
   chevron?: boolean;
+  /** Trailing icon instead of the chevron, e.g. "arrow-right". */
+  trailingIcon?: IconName;
   size?: 'regular' | 'compact';
 };
 
@@ -30,8 +32,10 @@ export function Button({
   accessibilityHint,
   icon,
   chevron = false,
+  trailingIcon,
   size = 'regular',
 }: Props) {
+  const trailing = trailingIcon ?? (chevron ? 'chevron-right' : undefined);
   const isDisabled = disabled || loading;
   const textColor = variant === 'primary' ? colors.onAccent : variant === 'danger' ? colors.danger : colors.text;
   const compact = size === 'compact';
@@ -61,7 +65,7 @@ export function Button({
           <Text style={[styles.text, compact && styles.textCompact, { color: textColor }]} numberOfLines={1}>
             {title}
           </Text>
-          {chevron ? <MaterialCommunityIcons name="chevron-right" size={compact ? 20 : 24} color={textColor} /> : null}
+          {trailing ? <MaterialCommunityIcons name={trailing} size={compact ? 20 : 24} color={textColor} /> : null}
         </View>
       )}
     </Pressable>
