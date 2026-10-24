@@ -1,9 +1,9 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 
-import { colors, radius, spacing, typography } from '@/constants/theme';
+import { muscleIcons } from '@/constants/photos';
+import { cardShadow, colors, radius, spacing, typography } from '@/constants/theme';
 
-import { MUSCLE_GROUPS, MUSCLE_ICONS, MUSCLE_LABELS, type MuscleGroup } from '../types';
+import { MUSCLE_GROUPS, MUSCLE_LABELS, type MuscleGroup } from '../types';
 
 type Props = {
   value: MuscleGroup | 'all';
@@ -32,10 +32,11 @@ export function MuscleGroupPicker({ value, onChange }: Props) {
             accessibilityHint={selected ? 'Filter hatane ke liye dobara tap karein' : undefined}
             style={[styles.tile, selected && styles.tileSelected]}
           >
-            <MaterialCommunityIcons
-              name={MUSCLE_ICONS[group]}
-              size={34}
-              color={selected ? colors.accent : colors.textMuted}
+            <Image
+              source={selected ? muscleIcons[group].on : muscleIcons[group].off}
+              style={styles.icon}
+              resizeMode="contain"
+              accessibilityIgnoresInvertColors
             />
             <Text style={[styles.label, selected && styles.labelSelected]}>{MUSCLE_LABELS[group]}</Text>
           </Pressable>
@@ -46,10 +47,10 @@ export function MuscleGroupPicker({ value, onChange }: Props) {
 }
 
 const styles = StyleSheet.create({
-  row: { gap: spacing.sm, paddingVertical: 2 },
+  row: { gap: spacing.sm, paddingVertical: 4, paddingRight: spacing.lg },
   tile: {
-    width: 92,
-    height: 96,
+    width: 96,
+    height: 106,
     borderRadius: radius.md,
     borderWidth: 1.5,
     borderColor: colors.border,
@@ -57,8 +58,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.xs,
+    ...cardShadow,
   },
-  tileSelected: { borderColor: colors.accent, backgroundColor: colors.accentSoft },
+  tileSelected: { borderColor: colors.accent, backgroundColor: colors.accentSoft, borderWidth: 2 },
+  icon: { width: 58, height: 52 },
   label: { ...typography.label, color: colors.text },
-  labelSelected: { color: colors.accentText },
+  labelSelected: { color: colors.accentText, fontWeight: '800' },
 });

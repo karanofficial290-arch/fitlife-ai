@@ -42,7 +42,7 @@ Statuses: Not started · In progress · Implemented · Tested · Blocked
 | Sign Up per owner design: name, email, mobile (optional), password, DOB (13+), gender, Terms checkbox | Implemented | Profile fields saved by DB trigger; malformed values stored as NULL (SQL-tested) |
 | Login with mobile number; Google / Apple / Facebook buttons | Not started | Need SMS provider / OAuth apps set up by owner — not shown until they work |
 | Terms & Privacy Policy screens | Implemented (DRAFT) | Owner must review; support email placeholder |
-| Photo slots + `constants/photos.ts` registry | Implemented | Owner will send photos; branded gradient placeholder until then |
+| Photos from owner's designs: home/workout heroes, 4 chest plan photos, 3 shortcut images, 6 anatomy icons (green/grey) | Implemented | Low-res crops (≤420 px wide); owner can send HD originals to replace. Other muscle groups' plan cards keep the placeholder until photos arrive |
 | `meal_logs` table + `calorie_goal` / `step_goal` on profile | **Tested** | RLS SQL test: own rows only, anon 0 |
 | Home: hero, today's workout, calories/water/steps rings, nutrition donut, weekly chart, weight tiles, 4 shortcuts, 4 quick actions | Implemented | Log Meal sheet saves real meals |
 | Steps | Blocked | Needs Health Connect (planned with Progress); card shows "—" and explains, no fake number |

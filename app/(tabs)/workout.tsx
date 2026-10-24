@@ -82,7 +82,7 @@ export default function WorkoutScreen() {
       {loading && !data ? (
         <Skeleton height={230} />
       ) : todays ? (
-        <PhotoSlot source={photos.workoutHero} placeholderIcon="weight-lifter" iconAlign="right" fadeLeft style={styles.hero}>
+        <PhotoSlot source={photos.workoutHero} placeholderIcon="weight-lifter" layout="right" rightWidth="52%" style={styles.hero}>
           <View style={styles.heroContent}>
             <View style={styles.kicker}>
               <MaterialCommunityIcons name="dumbbell" size={16} color={colors.accentText} />
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   iconButton: { width: MIN_TOUCH_TARGET, height: MIN_TOUCH_TARGET, alignItems: 'center', justifyContent: 'center' },
   hero: { borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border, ...cardShadow },
-  heroContent: { padding: spacing.lg, gap: spacing.sm, maxWidth: '74%' },
+  heroContent: { padding: spacing.lg, gap: spacing.sm, maxWidth: '66%' },
   kicker: {
     flexDirection: 'row',
     alignItems: 'center',

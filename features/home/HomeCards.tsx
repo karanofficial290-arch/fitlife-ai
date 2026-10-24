@@ -12,6 +12,9 @@ import { formatNumber, type DaySummary } from '@/features/nutrition/nutritionLog
 import { WEEKDAY_SHORT } from '@/utils/dates';
 import { clampProgress, percent } from '@/utils/progress';
 
+/** Matches the light sky at the left edge of the home hero photo. */
+const HERO_BG = '#EEF3F1';
+
 export const MACRO_COLORS = { protein: '#F59E0B', carbs: '#EAB308', fat: '#8B5CF6' } as const;
 
 /* ---------- shared card shell ---------- */
@@ -44,7 +47,7 @@ type HeroProps = { greeting: string; name: string | null; goalProgress: number; 
 export function HeroBanner({ greeting, name, goalProgress, photo }: HeroProps) {
   const pct = percent(goalProgress);
   return (
-    <PhotoSlot source={photo} placeholderIcon="arm-flex" iconAlign="right" fadeLeft style={styles.hero}>
+    <PhotoSlot source={photo} placeholderIcon="arm-flex" layout="right" rightWidth="56%" background={HERO_BG} style={styles.hero}>
       <View style={styles.heroContent}>
         <View style={styles.greetingPill}>
           <MaterialCommunityIcons name="white-balance-sunny" size={16} color="#F59E0B" />
@@ -71,9 +74,11 @@ export function HeroBanner({ greeting, name, goalProgress, photo }: HeroProps) {
           <Text style={styles.barValue}>{pct}%</Text>
         </View>
       </View>
-      <Text style={styles.heroScript} importantForAccessibility="no">
-        Stronger Than{'\n'}Yesterday
-      </Text>
+      {photo ? null : (
+        <Text style={styles.heroScript} importantForAccessibility="no">
+          Stronger Than{'\n'}Yesterday
+        </Text>
+      )}
     </PhotoSlot>
   );
 }
@@ -318,7 +323,7 @@ const styles = StyleSheet.create({
   workoutName: { fontSize: 20, fontWeight: '800', color: colors.text },
 
   hero: { borderRadius: radius.lg, minHeight: 210, ...cardShadow },
-  heroContent: { padding: spacing.lg, gap: 6, maxWidth: '68%' },
+  heroContent: { padding: spacing.lg, gap: 6, maxWidth: '64%' },
   greetingPill: {
     flexDirection: 'row',
     alignItems: 'center',
