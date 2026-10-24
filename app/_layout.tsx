@@ -1,22 +1,18 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { SPLASH_BACKGROUND, WelcomeSplash } from '@/components/brand/WelcomeSplash';
 import { colors } from '@/constants/theme';
 import { AuthProvider, useAuth } from '@/features/auth/AuthProvider';
 
-function RootNavigator() {
-  const { session, initializing } = useAuth();
+/** Shortest time the welcome screen stays up, so it never just flashes. */
+const MIN_SPLASH_MS = 1500;
 
-  if (initializing) {
-    return (
-      <View style={styles.loading} accessibilityLabel="Loading" accessibilityRole="progressbar">
-        <ActivityIndicator size="large" color={colors.accent} />
-      </View>
-    );
-  }
-
+function AppStack() {
+  const { session } = useAuth();
   const signedIn = !!session;
 
   return (
@@ -39,11 +35,30 @@ function RootNavigator() {
   );
 }
 
+function RootNavigator() {
+  const { initializing } = useAuth();
+  const [minTimePassed, setMinTimePassed] = useState(false);
+  const [splashGone, setSplashGone] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setMinTimePassed(true), MIN_SPLASH_MS);
+    return () => clearTimeout(t);
+  }, []);
+
+  return (
+    <View style={styles.root}>
+      <StatusBar style={splashGone ? 'dark' : 'light'} />
+      {/* Mount the app once the session is known; the splash fades out on top of it. */}
+      {initializing ? <View style={styles.splashBg} /> : <AppStack />}
+      {!splashGone ? <WelcomeSplash ready={!initializing && minTimePassed} onDone={() => setSplashGone(true)} /> : null}
+    </View>
+  );
+}
+
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <StatusBar style="dark" />
         <RootNavigator />
       </AuthProvider>
     </SafeAreaProvider>
@@ -51,5 +66,6 @@ export default function RootLayout() {
 }
 
 const styles = StyleSheet.create({
-  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background },
+  root: { flex: 1, backgroundColor: colors.background },
+  splashBg: { flex: 1, backgroundColor: SPLASH_BACKGROUND },
 });

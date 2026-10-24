@@ -36,6 +36,7 @@ Statuses: Not started · In progress · Implemented · Tested · Blocked
 | Item | Status | Notes |
 | --- | --- | --- |
 | FITMXO branding: name, tagline, logo mark, colors #079669 / #10233F / #F5F8FA | Implemented | Buttons use 19px bold labels so white-on-green meets AA large-text |
+| Welcome splash from owner artwork (animated lime loading bar, min 1.5 s, fades into app) | Implemented | `assets/splash/welcome.jpg` cropped from owner's design |
 | Photo slots + `constants/photos.ts` registry | Implemented | Owner will send photos; branded gradient placeholder until then |
 | `meal_logs` table + `calorie_goal` / `step_goal` on profile | **Tested** | RLS SQL test: own rows only, anon 0 |
 | Home: hero, today's workout, calories/water/steps rings, nutrition donut, weekly chart, weight tiles, 4 shortcuts, 4 quick actions | Implemented | Log Meal sheet saves real meals |
