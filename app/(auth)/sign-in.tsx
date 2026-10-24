@@ -2,6 +2,7 @@ import { Link } from 'expo-router';
 import { useRef, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { LogoMark } from '@/components/brand/LogoMark';
 import { Button } from '@/components/ui/Button';
 import { FormMessage } from '@/components/ui/FormMessage';
 import { Screen } from '@/components/ui/Screen';
@@ -38,7 +39,10 @@ export default function SignInScreen() {
   return (
     <Screen>
       <View style={styles.header}>
-        <Text style={styles.brand}>FitMxo</Text>
+        <View style={styles.brandRow}>
+          <LogoMark size={44} />
+          <Text style={styles.brand}>FITMXO</Text>
+        </View>
         <Text style={styles.title} accessibilityRole="header">
           Wapas swagat hai
         </Text>
@@ -90,11 +94,12 @@ export default function SignInScreen() {
 
 const styles = StyleSheet.create({
   header: { gap: spacing.sm, marginTop: spacing.xxl, marginBottom: spacing.md },
-  brand: { ...typography.label, color: colors.accent, letterSpacing: 1.2, textTransform: 'uppercase' },
+  brandRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  brand: { fontSize: 26, fontWeight: '900', color: colors.text, letterSpacing: 0.5 },
   title: { ...typography.title, color: colors.text },
   subtitle: { ...typography.body, color: colors.textMuted },
-  link: { ...typography.label, color: colors.accent, alignSelf: 'flex-end', paddingVertical: spacing.sm },
+  link: { ...typography.label, color: colors.accentText, alignSelf: 'flex-end', paddingVertical: spacing.sm },
   footer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' },
   muted: { ...typography.body, color: colors.textMuted },
-  linkInline: { ...typography.label, color: colors.accent, paddingVertical: spacing.sm },
+  linkInline: { ...typography.label, color: colors.accentText, paddingVertical: spacing.sm },
 });

@@ -27,6 +27,7 @@ function RootNavigator() {
         <Stack.Screen name="workouts/session/[id]" options={{ gestureEnabled: false }} />
         <Stack.Screen name="workouts/exercises" />
         <Stack.Screen name="workouts/history" />
+        <Stack.Screen name="coach" />
       </Stack.Protected>
       <Stack.Protected guard={!signedIn}>
         <Stack.Screen name="(auth)" />

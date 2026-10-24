@@ -4,7 +4,7 @@ import type { Tables } from '@/types/database';
 
 export type Profile = Pick<
   Tables<'profiles'>,
-  'id' | 'display_name' | 'onboarding_completed' | 'water_goal_ml' | 'goal_weight_kg'
+  'id' | 'display_name' | 'onboarding_completed' | 'water_goal_ml' | 'goal_weight_kg' | 'calorie_goal' | 'step_goal'
 >;
 
 export async function fetchMyProfile(
@@ -14,7 +14,7 @@ export async function fetchMyProfile(
     // RLS guarantees only the signed-in user's own row is returned.
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, display_name, onboarding_completed, water_goal_ml, goal_weight_kg')
+      .select('id, display_name, onboarding_completed, water_goal_ml, goal_weight_kg, calorie_goal, step_goal')
       .eq('id', userId)
       .maybeSingle();
     if (error) return { data: null, error: mapAuthError(error) };

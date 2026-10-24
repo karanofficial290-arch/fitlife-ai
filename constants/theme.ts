@@ -1,19 +1,21 @@
-// Single source of truth for FitMxo's visual identity (light, green-accented).
-// Every text/background pair used in the app meets WCAG AA (4.5:1) — checked 2026-10-23.
+// Single source of truth for FITMXO's visual identity (owner brief, 2026-10-24).
+// Brand green #079669 is used for fills, rings and icons, and for button labels
+// only at large bold size (3.77:1 passes AA for large text). Smaller green text
+// uses `accentText` (#047857, ≥4.9:1).
 
 export const colors = {
-  background: '#F3F7F5',
+  background: '#F5F8FA',
   surface: '#FFFFFF',
-  surfaceRaised: '#EEF4F1',
-  border: '#E1EAE5',
-  text: '#0F2233',
-  textMuted: '#5A6B78',
+  surfaceRaised: '#EEF3F6',
+  border: '#E3EAF0',
+  text: '#10233F',
+  textMuted: '#5B6B7D',
 
-  accent: '#14804A',
-  accentPressed: '#0F6E3F',
+  accent: '#079669',
+  accentPressed: '#047857',
   /** Use for green text on `accentSoft` backgrounds. */
-  accentText: '#0F6E3F',
-  accentSoft: '#E4F4EA',
+  accentText: '#047857',
+  accentSoft: '#E6F6F0',
   onAccent: '#FFFFFF',
 
   water: '#1E6FC0',
@@ -22,16 +24,16 @@ export const colors = {
   caloriesSoft: '#FDF1E3',
   purple: '#6D3FD1',
   purpleSoft: '#F0EAFC',
-  steps: '#14804A',
+  steps: '#079669',
 
   danger: '#C62828',
   dangerSurface: '#FDECEC',
-  success: '#14804A',
-  successSurface: '#E4F4EA',
+  success: '#047857',
+  successSurface: '#E6F6F0',
   info: '#1E6FC0',
   infoSurface: '#E6F0FB',
 
-  shadow: '#0F2233',
+  shadow: '#10233F',
 } as const;
 
 export const spacing = {
@@ -44,9 +46,9 @@ export const spacing = {
 } as const;
 
 export const radius = {
-  sm: 8,
-  md: 12,
-  lg: 18,
+  sm: 10,
+  md: 14,
+  lg: 20,
   pill: 999,
 } as const;
 
@@ -62,7 +64,7 @@ export const typography = {
 /** Soft card shadow that works on Android (elevation) and iOS. */
 export const cardShadow = {
   shadowColor: colors.shadow,
-  shadowOpacity: 0.06,
+  shadowOpacity: 0.07,
   shadowRadius: 10,
   shadowOffset: { width: 0, height: 3 },
   elevation: 2,

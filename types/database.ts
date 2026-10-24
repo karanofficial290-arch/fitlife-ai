@@ -53,6 +53,48 @@ export type Database = {
         }
         Relationships: []
       }
+      meal_logs: {
+        Row: {
+          calories: number
+          carbs_g: number
+          created_at: string
+          fat_g: number
+          id: string
+          logged_on: string
+          meal_type: string
+          name: string
+          portion: string | null
+          protein_g: number
+          user_id: string
+        }
+        Insert: {
+          calories: number
+          carbs_g?: number
+          created_at?: string
+          fat_g?: number
+          id?: string
+          logged_on?: string
+          meal_type: string
+          name: string
+          portion?: string | null
+          protein_g?: number
+          user_id: string
+        }
+        Update: {
+          calories?: number
+          carbs_g?: number
+          created_at?: string
+          fat_g?: number
+          id?: string
+          logged_on?: string
+          meal_type?: string
+          name?: string
+          portion?: string | null
+          protein_g?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -62,6 +104,8 @@ export type Database = {
           onboarding_completed: boolean
           updated_at: string
           water_goal_ml: number
+          calorie_goal: number
+          step_goal: number
         }
         Insert: {
           created_at?: string
@@ -71,6 +115,8 @@ export type Database = {
           onboarding_completed?: boolean
           updated_at?: string
           water_goal_ml?: number
+          calorie_goal?: number
+          step_goal?: number
         }
         Update: {
           created_at?: string
@@ -80,6 +126,8 @@ export type Database = {
           onboarding_completed?: boolean
           updated_at?: string
           water_goal_ml?: number
+          calorie_goal?: number
+          step_goal?: number
         }
         Relationships: []
       }

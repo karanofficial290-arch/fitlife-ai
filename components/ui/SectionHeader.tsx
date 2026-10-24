@@ -20,7 +20,7 @@ export function SectionHeader({ title, actionLabel, onAction }: Props) {
           style={({ pressed }) => [styles.action, pressed && { opacity: 0.6 }]}
         >
           <Text style={styles.actionText}>{actionLabel}</Text>
-          <MaterialCommunityIcons name="chevron-right" size={18} color={colors.accent} />
+          <MaterialCommunityIcons name="chevron-right" size={18} color={colors.accentText} />
         </Pressable>
       ) : null}
     </View>
@@ -31,5 +31,5 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.sm },
   title: { ...typography.heading, color: colors.text },
   action: { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.xs },
-  actionText: { ...typography.label, color: colors.accent },
+  actionText: { ...typography.label, color: colors.accentText },
 });

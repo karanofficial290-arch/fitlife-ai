@@ -27,9 +27,24 @@ Statuses: Not started · In progress · Implemented · Tested · Blocked
 | Workout tab: today's workout, muscle/level/location filters, recommended, current workout, quick access | Implemented | |
 | Plan detail, workout session (sets, rest timer, duration timer, finish/stop), exercise library (search + paging), history (paging) | Implemented | |
 | Home: greeting, daily goal bar, today's workout, water ring, weekly minutes chart, current/goal weight, quick actions | Implemented | Real data only |
-| Home: calories, steps, nutrition, AI assistant | Not started | Shown as "Jald aa raha hai" — no fake numbers |
+| Home: calories, steps, nutrition, AI assistant | Superseded | See design pass 2 |
 | Pure logic (dates, plan picking, weekly minutes, weight/water parsing) | **Tested** | 38 unit tests in total |
 | GitHub Actions CI (install, Expo version check, typecheck, lint, Jest) | **Tested** | First run green on `5168eaa` |
+
+## Design pass 2 — FITMXO brief (2026-10-24), step 1 of 4: Home + Workout
+
+| Item | Status | Notes |
+| --- | --- | --- |
+| FITMXO branding: name, tagline, logo mark, colors #079669 / #10233F / #F5F8FA | Implemented | Buttons use 19px bold labels so white-on-green meets AA large-text |
+| Photo slots + `constants/photos.ts` registry | Implemented | Owner will send photos; branded gradient placeholder until then |
+| `meal_logs` table + `calorie_goal` / `step_goal` on profile | **Tested** | RLS SQL test: own rows only, anon 0 |
+| Home: hero, today's workout, calories/water/steps rings, nutrition donut, weekly chart, weight tiles, 4 shortcuts, 4 quick actions | Implemented | Log Meal sheet saves real meals |
+| Steps | Blocked | Needs Health Connect (planned with Progress); card shows "—" and explains, no fake number |
+| AI Coach | Implemented (rule-based) | Uses the user's own data; real AI chat needs owner approval for provider cost |
+| Workout: photo hero, muscle tiles, level filter, Gym/Home, photo plan cards, current workout, library/history | Implemented | |
+| Unit tests | **Tested** | 51 passing (nutrition, meal form, coach added) |
+
+Next steps in order: **Diet** (7-day veg/non-veg plan, meals, logging) → **Progress** (charts, calendar, 30-day challenge, streaks, Health Connect steps) → **Profile** (fitness profile, preferences, reminders, account).
 
 ## Device builds
 
@@ -37,7 +52,7 @@ Statuses: Not started · In progress · Implemented · Tested · Blocked
 | --- | --- | --- |
 | Expo account, org `fitmxos-team`, project `fitmxo` | Implemented | Created by owner on expo.dev |
 | `app.json` owner + projectId, `eas.json` profiles | Implemented | |
-| GitHub Actions "Android build (EAS)" workflow | Implemented | Needs `EXPO_TOKEN` secret; not run yet |
+| GitHub Actions "Android build (EAS)" workflow | **Tested** | First APK built 2026-10-24 (build 397d344f); owner installed and opened it |
 
 ## Not yet verified
 

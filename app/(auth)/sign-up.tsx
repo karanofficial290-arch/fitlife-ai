@@ -75,7 +75,7 @@ export default function SignUpScreen() {
         <Text style={styles.title} accessibilityRole="header">
           Account banayein
         </Text>
-        <Text style={styles.subtitle}>FitMxo ke saath apna fitness safar shuru karein.</Text>
+        <Text style={styles.subtitle}>FITMXO ke saath apna fitness safar shuru karein.</Text>
       </View>
 
       <FormMessage tone="error" message={formError} />
@@ -129,7 +129,7 @@ export default function SignUpScreen() {
       />
 
       <Text style={styles.hint}>
-        Account banake aap maante hain ki FitMxo aapka data sirf app chalane ke liye store karega. Poori privacy
+        Account banake aap maante hain ki FITMXO aapka data sirf app chalane ke liye store karega. Poori privacy
         policy release se pehle add ki jayegi.
       </Text>
 
@@ -152,5 +152,5 @@ const styles = StyleSheet.create({
   hint: { ...typography.caption, color: colors.textMuted },
   footer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' },
   muted: { ...typography.body, color: colors.textMuted },
-  linkInline: { ...typography.label, color: colors.accent, paddingVertical: spacing.sm },
+  linkInline: { ...typography.label, color: colors.accentText, paddingVertical: spacing.sm },
 });

@@ -45,7 +45,10 @@ export function CurrentWorkoutCard({ session }: { session: SessionDetail }) {
             {session.plan_name}
           </Text>
           <Button
-            title="Continue Workout"
+            title="Continue"
+            icon="play"
+            chevron
+            size="compact"
             onPress={() => router.push({ pathname: '/workouts/session/[id]', params: { id: session.id } })}
           />
         </View>
